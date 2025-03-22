@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            color: #333;
+        }
+        ul {
+            text-align: left;
+            list-style-type: square;
+        }
+        .quiz {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <header>Data Structures and Algorithms</header>
+    <div class="container">
+        <h2>Introduction</h2>
+        <p>Data Structures and Algorithms (DSA) are fundamental to programming and problem-solving.</p>
+        <h2>Key Topics</h2>
+        <ul>
+            <li>Arrays</li>
+            <li>Linked Lists</li>
+            <li>Stacks & Queues</li>
+            <li>Trees & Graphs</li>
+            <li>Sorting Algorithms</li>
+            <li>Searching Algorithms</li>
+        </ul>
+        <div class="quiz">
+            <h2>Quick Quiz</h2>
+            <p>What is the time complexity of binary search?</p>
+            <button onclick="checkAnswer()">Check Answer</button>
+            <p id="answer" style="display: none; color: blue;">O(log n)</p>
+        </div>
+    </div>
+    <script>
+        function checkAnswer() {
+            document.getElementById("answer").style.display = "block";
+        }
+    </script>
+</body>
+</html>
