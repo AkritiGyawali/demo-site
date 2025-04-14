@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nepali Calendar 2082 B.S. (with A.D.)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .calendar-container {
+            max-width: 900px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #dee2e6;
+            overflow: hidden; /* Contain header background */
+        }
+        .calendar-header {
+            text-align: center;
+            margin: -30px -30px 25px -30px; /* Extend to container edges */
+            padding: 20px 30px; /* Adjusted padding */
+            border-bottom: 1px solid #dee2e6; /* Use border color */
+            background-color: #cce5ff; /* Slightly more blue background */
+        }
+        .calendar-header h2 {
+            color: #000000; /* Black color */
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+         .calendar-header h3 { /* Style for Month/Year */
+             color: #333;
+             font-weight: 500;
+             margin-bottom: 0;
+         }
+        .month-selector {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        .month-selector label {
+            margin-right: 10px;
+            font-weight: 500;
+        }
+        #monthSelect {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            background-color: #e9ecef;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+        .calendar-grid div { /* Base style for all grid divs */
+            padding: 8px 5px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            position: relative;
+            border: 1px solid #e9ecef;
+            transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        /* Style for Day Name Headers */
+        .calendar-grid .day-name {
+            font-weight: bold;
+            background-color: #4682B4; /* Steel Blue header */
+            color: white;
+            padding: 8px 5px; /* Adjusted padding */
+            font-size: 0.9rem;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            min-height: auto; /* Override min-height */
+            line-height: 1.2; /* Adjust line height */
+            border: none; /* Remove border from day names */
+        }
+        /* Span for Nepali Day Name */
+        .day-name-ne {
+            display: block;
+        }
+        /* Span for English Day Name */
+        .day-name-en {
+            display: block;
+            font-size: 0.7em; /* Smaller font */
+            font-weight: normal; /* Normal weight */
+            color: #d0e0f0; /* Lighter color */
+            margin-top: 1px; /* Small space */
+        }
+        /* Style for Day Cells (non-header) */
+        .calendar-grid .day-cell {
+            cursor: default;
+            /* Subtle gradient for 3D effect (applies to Sun, Mon, etc.) */
+            background: linear-gradient(to bottom right, #ffffff, #f0f0f0);
+            border: 1px solid #e0e0e0; /* Slightly adjust border */
+        }
+        .calendar-grid .day-cell:hover {
+             /* Adjust hover gradient */
+             background: linear-gradient(to bottom right, #f5f5f5, #e8e8e8);
+             transform: translateY(-2px);
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Add shadow on hover */
+        }
+        /* Empty cells */
+        .calendar-grid .empty-cell {
+            background: #ffffff; /* Plain white */
+            border: none;
+            box-shadow: none;
+        }
+        .calendar-grid .empty-cell:hover {
+             background: #ffffff;
+             transform: none;
+             box-shadow: none;
+        }
+        /* BS Date Number */
+        .calendar-grid .date-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: #343a40;
+        }
+        /* A.D. Date */
+        .ad-date {
+            font-size: 0.7em;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        /* Red text for Sat/Holiday BS Dates */
+        .calendar-grid .saturday .date-number,
+        .calendar-grid .holiday .date-number {
+            color: #dc3545;
+        }
+         /* Gradient background for Saturdays and Holidays */
+         .calendar-grid .saturday,
+         .calendar-grid .holiday {
+            /* Light red gradient */
+            background: linear-gradient(to bottom right, #fff3f4, #ffebee);
+        }
+         .calendar-grid .saturday:hover,
+         .calendar-grid .holiday:hover {
+             /* Slightly darker red gradient on hover */
+             background: linear-gradient(to bottom right, #ffebee, #ffdde0);
+             transform: translateY(-2px);
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+         }
+        /* Holiday specific styles */
+        .calendar-grid .holiday {
+            position: relative;
+        }
+        .calendar-grid .holiday::after { /* Red dot indicator */
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background-color: #dc3545;
+            border-radius: 50%;
+            z-index: 1; /* Ensure dot is above background */
+        }
+        .holiday-name {
+            font-size: 0.65rem;
+            color: #dc3545;
+            margin-top: auto;
+            line-height: 1.1;
+            padding: 0 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+            position: absolute;
+            bottom: 12px;
+            left: 0;
+            right: 0;
+            z-index: 1; /* Ensure name is above background */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .calendar-container { padding: 20px; }
+             .calendar-header { margin: -20px -20px 25px -20px; padding: 15px 20px; }
+            .calendar-grid div { padding: 6px 3px; min-height: 70px; font-size: 0.85rem; }
+            .calendar-grid .date-number { font-size: 1.1rem; }
+            .calendar-grid .day-name { font-size: 0.8rem; padding: 6px 3px; } /* Adjust padding */
+            .ad-date { font-size: 0.65em; }
+            .holiday-name { font-size: 0.6rem; bottom: 10px; }
+            .calendar-grid .holiday::after { bottom: 3px; }
+        }
+         @media (max-width: 576px) {
+            .calendar-container { padding: 15px; }
+             .calendar-header { margin: -15px -15px 20px -15px; padding: 10px 15px; }
+            .calendar-grid { gap: 5px; }
+            .calendar-grid div { padding: 5px 2px; min-height: 65px; font-size: 0.75rem; border-radius: 5px; } /* Adjusted min-height */
+            .calendar-grid .date-number { font-size: 1rem; }
+            .calendar-grid .day-name { font-size: 0.7rem; padding: 5px 2px; border-radius: 4px; } /* Adjust padding */
+            .ad-date { font-size: 0.6em; }
+            .holiday-name { font-size: 0.55rem; bottom: 8px; }
+             .calendar-grid .holiday::after { bottom: 2px; width: 4px; height: 4px;}
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <h2>नेपाली पात्रो २०८२</h2>
+            <h3 id="currentMonthYear"></h3>
+        </div>
+
+        <div class="month-selector">
+            <label for="monthSelect">महिना चयन गर्नुहोस्:</label>
+            <select id="monthSelect" class="form-select-sm"></select>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid">
+            </div>
+         <div class="text-center mt-3">
+            <small class="text-muted">
+                *शनिबार र सार्वजनिक बिदाहरू रातोमा चिन्ह लगाइएका छन्। बिदा सूची सूचक हो र आधिकारिक घोषणा अनुसार फरक हुन सक्छ।<br>
+                *A.D. dates are approximate (using Baisakh 1 = April 14, 2025).<br>
+                *Appearance of Nepali numerals (esp. ८ vs ९) depends on font rendering.
+            </small>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        // Nepali numerals mapping
+        const nepaliNumerals = ['०', '१', '२', '३', '४', '५', '६', '७', '८', '९'];
+        const toNepaliNumeral = (num) => {
+            // Note: Visual distinction between ८ and ९ depends on the font rendering in the browser/OS.
+            return String(num).split('').map(digit => nepaliNumerals[parseInt(digit)]).join('');
+        };
+
+        // A.D. date corresponding to Baisakh 1, 2082 B.S.
+        const startingADDate = new Date(2025, 3, 14); // April 14, 2025
+
+        // B.S. 2082 Calendar Data
+        // UPDATED: Falgun days = 30, Chaitra days = 30, start day for Chaitra recalculated.
+        const calendarData2082 = [
+            // Month: Nepali Name, Days in Month, Starting Day Index (0=Sun), Year, Holidays {Day: "Name"}
+            { bsMonth: 'बैशाख', days: 31, startDay: 1, year: 2082, holidays: { 1: "नयाँ वर्ष" } }, // Starts Mon -> Ends Wed (31 days)
+            { bsMonth: 'जेठ', days: 31, startDay: 4, year: 2082, holidays: { 15: "गणतन्त्र दिवस" } }, // Starts Thu -> Ends Sat (31 days)
+            { bsMonth: 'असार', days: 32, startDay: 0, year: 2082, holidays: {} }, // Starts Sun -> Ends Wed (32 days)
+            { bsMonth: 'श्रावण', days: 31, startDay: 4, year: 2082, holidays: { /* Add श्रावण holidays */ } }, // Starts Thu -> Ends Sat (31 days)
+            { bsMonth: 'भाद्र', days: 31, startDay: 0, year: 2082, holidays: { 3: "संविधान दिवस" } }, // Starts Sun -> Ends Tue (31 days)
+            { bsMonth: 'असोज', days: 31, startDay: 3, year: 2082, holidays: { 6: "घटस्थापना", 23: "फूलपाती", 24: "महा अष्टमी", 25: "महानवमी", 26: "विजया दशमी"} }, // Starts Wed -> Ends Fri (31 days)
+            { bsMonth: 'कार्तिक', days: 30, startDay: 6, year: 2082, holidays: { 14: "लक्ष्मी पूजा", 15: "गोवर्धन पूजा", 16: "भाइटीका" } }, // Starts Sat -> Ends Sun (30 days)
+            { bsMonth: 'मंसिर', days: 29, startDay: 1, year: 2082, holidays: {} }, // Starts Mon -> Ends Sun (29 days)
+            { bsMonth: 'पुष', days: 30, startDay: 2, year: 2082, holidays: { 15: "राष्ट्रिय एकता दिवस" } }, // Starts Tue -> Ends Wed (30 days)
+            { bsMonth: 'माघ', days: 29, startDay: 4, year: 2082, holidays: { 1: "माघे संक्रान्ति", 16: "शहीद दिवस" } }, // Starts Thu -> Ends Thu (29 days)
+            { bsMonth: 'फागुन', days: 30, startDay: 5, year: 2082, holidays: { 7: "प्रजातन्त्र दिवस", /* Mahashivaratri, Holi */ } }, // Starts Fri -> Ends Sat (UPDATED: 30 days)
+            { bsMonth: 'चैत', days: 30, startDay: 0, year: 2082, holidays: { /* Holi, Ghode Jatra */ } } // Starts Sun (Recalculated) -> Ends Mon (UPDATED: 30 days)
+        ];
+
+        const monthSelect = document.getElementById('monthSelect');
+        const calendarGrid = document.getElementById('calendarGrid');
+        const currentMonthYearEl = document.getElementById('currentMonthYear');
+        const nepaliDayNames = ['आइत', 'सोम', 'मंगल', 'बुध', 'बिहि', 'शुक्र', 'शनि'];
+        const englishDayNamesShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; // English short names
+
+        // Populate month selector
+        calendarData2082.forEach((monthData, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `${monthData.bsMonth} ${toNepaliNumeral(monthData.year)}`;
+            monthSelect.appendChild(option);
+        });
+
+        // Function to generate calendar for a given month index
+        function generateCalendar(monthIndex) {
+            // Ensure monthIndex is valid
+             if (monthIndex < 0 || monthIndex >= calendarData2082.length) {
+                console.error("Invalid month index:", monthIndex);
+                monthIndex = 0; // Default to Baisakh
+            }
+
+            const monthData = calendarData2082[monthIndex];
+             if (!monthData) {
+                console.error("Month data not found for index:", monthIndex);
+                return; // Stop if data is missing
+            }
+            const { bsMonth, days, startDay, year, holidays } = monthData;
+
+            // Clear previous grid
+            calendarGrid.innerHTML = '';
+
+            // Update header
+            currentMonthYearEl.textContent = `${bsMonth} ${toNepaliNumeral(year)}`;
+
+            // Add day names header (with Nepali and English)
+            nepaliDayNames.forEach((neDay, index) => {
+                const dayNameCell = document.createElement('div');
+                dayNameCell.classList.add('day-name');
+
+                const neNameSpan = document.createElement('span');
+                neNameSpan.classList.add('day-name-ne');
+                neNameSpan.textContent = neDay;
+                dayNameCell.appendChild(neNameSpan);
+
+                const enNameSpan = document.createElement('span');
+                enNameSpan.classList.add('day-name-en');
+                enNameSpan.textContent = englishDayNamesShort[index]; // Add English name
+                dayNameCell.appendChild(enNameSpan);
+
+                calendarGrid.appendChild(dayNameCell);
+            });
+
+            // Calculate the starting A.D. date for the current B.S. month
+            let daysOffset = 0;
+            for (let i = 0; i < monthIndex; i++) {
+                // Ensure the previous month data exists before accessing days
+                if (calendarData2082[i]) {
+                   daysOffset += calendarData2082[i].days;
+                } else {
+                    console.error("Missing month data for offset calculation at index:", i);
+                }
+            }
+            const currentMonthStartDateAD = new Date(startingADDate);
+            currentMonthStartDateAD.setDate(startingADDate.getDate() + daysOffset);
+
+            // Add empty cells for the start day offset
+            for (let i = 0; i < startDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.classList.add('empty-cell');
+                calendarGrid.appendChild(emptyCell);
+            }
+
+            // Add day cells
+            for (let day = 1; day <= days; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('day-cell');
+
+                // --- B.S. Date ---
+                const dateNumberBS = document.createElement('span');
+                dateNumberBS.classList.add('date-number');
+                dateNumberBS.textContent = toNepaliNumeral(day);
+                dayCell.appendChild(dateNumberBS);
+
+                // --- A.D. Date ---
+                const currentADDate = new Date(currentMonthStartDateAD);
+                // Add (day - 1) days to the start date of the month
+                currentADDate.setDate(currentMonthStartDateAD.getDate() + day - 1);
+                const adDateString = currentADDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); // Format: "Apr 14"
+
+                const dateNumberAD = document.createElement('span');
+                dateNumberAD.classList.add('ad-date');
+                dateNumberAD.textContent = adDateString;
+                dayCell.appendChild(dateNumberAD);
+
+                // --- Styling based on Day/Holiday ---
+                const dayOfWeek = (startDay + day - 1) % 7;
+
+                // Check if it's Saturday
+                if (dayOfWeek === 6) { // Saturday
+                    dayCell.classList.add('saturday');
+                }
+
+                // Check if it's a holiday
+                if (holidays && holidays[day]) {
+                    dayCell.classList.add('holiday');
+                    const holidayNameEl = document.createElement('span');
+                    holidayNameEl.classList.add('holiday-name');
+                    holidayNameEl.textContent = holidays[day];
+                    holidayNameEl.title = holidays[day]; // Tooltip for full name
+                    dayCell.appendChild(holidayNameEl);
+                }
+
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+
+        // Event listener for month selection change
+        monthSelect.addEventListener('change', (e) => {
+            generateCalendar(parseInt(e.target.value));
+        });
+
+        // Initial calendar generation (Baisakh 2082)
+        generateCalendar(0);
+
+    </script>
+
+</body>
+</html>
